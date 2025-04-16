@@ -35,3 +35,12 @@ export const getcardparams=async(id)=>{
     }
    
 }
+
+export const deletePost=(id)=>{
+    return apiGet.delete(`/posts/${id}`)
+
+}
+
+export const updatePosts=(id)=>{
+    return apiGet.patch(`/posts/${id}`,{title:"I have update"})
+}

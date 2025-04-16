@@ -1,9 +1,9 @@
 // import { fetchGets } from "../API/api"
-import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { fetchGets } from "../API/api"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { fetchGets, updatePosts } from "../API/api"
 import { NavLink } from "react-router-dom"
 import { useState } from "react"
-
+import { deletePost } from "../API/api"
 
 
 export const FetchRQ = () => {
@@ -28,6 +28,34 @@ export const FetchRQ = () => {
     placeholderData:keepPreviousData,
   })
 
+  const queryClient =useQueryClient()
+
+  //! mutation fuction to delete posts
+  const deleteMutation =useMutation({
+    mutationFn:(id)=>deletePost(id),
+    onSuccess:(data,id)=>{
+      // console.log(data,id)
+      queryClient.setQueryData(['post',pageNumber],(CurrentItems)=>{
+        return CurrentItems?.filter((post)=> post.id!==id)
+
+      })
+    }
+  })
+
+
+  //! mutation fuction to update posts
+  const updateMutation =useMutation({
+    mutationFn:(id)=>updatePosts(id),
+    onSuccess:(apiData,postId)=>{
+      console.log(apiData,postId)
+      queryClient.setQueryData(['post',pageNumber],(PostsData)=>{
+        return PostsData?.map((curPost)=>{
+          return curPost.id===postId ? {...curPost, title:apiData.data.title}:curPost;
+        })
+
+      })
+    }
+  })
 
   if (isLoading)return <p>loading</p>
  if (isError) return <p>Error:{error.message || "there are some error"}</p>
@@ -47,8 +75,8 @@ export const FetchRQ = () => {
 
       {!isLoading && !error && (
         <ul className="section-accordion">
-         {data?.map((item) => {
-            const { id, title, body } = item
+         {data?.map((CurrentItems) => {
+            const { id, title, body } = CurrentItems
             return (
                  <li
                 key={id}
@@ -59,6 +87,8 @@ export const FetchRQ = () => {
                             <p className="text-lg font-semibold text-gray-800">{title}</p>
                     <p className="text-gray-600 mt-2">{body}</p>
                     </NavLink>
+                    <button onClick={()=>deleteMutation.mutate(id)}>Delete</button>
+                    <button onClick={()=>updateMutation.mutate(id)}>update</button>
                  </li>
                             
                  
