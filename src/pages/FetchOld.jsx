@@ -63,6 +63,7 @@ export const FetchOld = () => {
 }
 
 {/* <template>
+  
   <div class="p-8 bg-gray-100 min-h-screen">
     <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">All Posts</h2>
 
