@@ -20,6 +20,9 @@ export const Header = () => {
         <Link to="/infinite" className={location.pathname === "/infinite" ? "active" : ""}>
           Infinite
         </Link>
+        <Link to="/propsdrill" className={location.pathname === "/propsdrill" ? "active" : ""}>
+          PropsDrilling
+        </Link>
       </nav>
     </header>
   );
